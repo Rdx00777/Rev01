@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neon-focus-v12-2-simplified';
+const CACHE_NAME = 'neon-focus-v13-0-powerhouse';
 const ASSETS = [
     '/',
     '/index.html',
