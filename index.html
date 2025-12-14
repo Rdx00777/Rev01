@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeonFocus V16 Hybrid</title>
+    <title>NeonFocus V17.0 Premium</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
     
@@ -84,8 +84,11 @@
         .btn-main { width: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; color: white; padding: 15px; border-radius: 12px; font-weight: 700; margin-top: 10px; cursor: pointer; }
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.8; padding: 5px; color: white; }
         .btn-revised { background: var(--primary); color: black; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
-        .btn-google { background: #4285F4; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-download { background: var(--secondary); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; text-decoration: none; display: inline-block; margin-top: 5px; }
+        .btn-google { background: #4285F4; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-google:active { transform: scale(0.98); }
+        
+        .btn-download { background: var(--secondary); color: white; padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; text-decoration: none; display: inline-block; margin-top: 5px; margin-right: 5px;}
+        .btn-link { background: rgba(0, 242, 255, 0.15); color: var(--primary); border: 1px solid var(--primary); padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; text-decoration: none; display: inline-block; margin-top: 5px; }
 
         .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-bottom: 10px; }
         .file-upload-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
@@ -107,6 +110,11 @@
         .badge.unlocked { opacity: 1; filter: grayscale(0); border: 1px solid var(--success); background: rgba(0, 255, 136, 0.1); }
         .badge-icon { font-size: 1.5rem; margin-bottom: 5px; }
         .badge-name { font-size: 0.7rem; font-weight: bold; }
+
+        /* Premium Login Card */
+        .login-card { text-align: center; padding: 30px 20px; border: 1px solid var(--primary); background: rgba(0, 242, 255, 0.03); }
+        .login-status { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; }
+        .login-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary); margin: 0 auto 15px; display: none; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 5000; justify-content: center; align-items: center; }
         .modal.open { display: flex !important; }
@@ -131,14 +139,12 @@
 </head>
 <body class="theme-neon">
 
-    <audio id="audio-rain" loop playsinline preload="auto" src="https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg"></audio>
-    <audio id="audio-forest" loop playsinline preload="auto" src="https://actions.google.com/sounds/v1/ambiences/forest_morning.ogg"></audio>
-    <audio id="audio-waves" loop playsinline preload="auto" src="https://actions.google.com/sounds/v1/water/waves_crashing_on_rocks_1.ogg"></audio>
-    <audio id="audio-fire" loop playsinline preload="auto" src="https://actions.google.com/sounds/v1/ambiences/fire.ogg"></audio>
+    <audio id="audio-rain" loop playsinline preload="auto" src="https://cdn.pixabay.com/audio/2022/07/04/audio_020c035432.mp3"></audio>
+    <audio id="audio-fire" loop playsinline preload="auto" src="https://cdn.pixabay.com/audio/2022/05/18/audio_315a609355.mp3"></audio>
 
     <header>
         <div class="brand">NeonFocus</div>
-        <div id="auth-status" style="font-size:0.8rem; color:var(--text-muted)">V16.0 (Hybrid)</div>
+        <div id="auth-status" style="font-size:0.8rem; color:var(--text-muted)">V17.0</div>
     </header>
 
     <section id="view-dashboard" class="view active">
@@ -192,8 +198,9 @@
             <input type="text" id="inp-subject" placeholder="Subject">
             <input type="text" id="inp-topic" placeholder="Topic">
             <input type="color" id="inp-color" value="#00f2ff" style="height:45px; padding:5px;">
+            <input type="text" id="inp-link" placeholder="Paste Link (Google Drive / YouTube) 🔗">
             <div class="file-upload-wrapper">
-                <div class="file-btn" id="file-label">📎 Attach File (PDF/Img)</div>
+                <div class="file-btn" id="file-label">📂 Attach File (PDF/Img) - Local</div>
                 <input type="file" id="inp-file" onchange="updateFileLabel(this)">
             </div>
             <button class="btn-main" onclick="addTopic()">+ Add Revision Topic</button>
@@ -203,11 +210,20 @@
     </section>
 
     <section id="view-profile" class="view">
-        <h3>Profile</h3>
-        <div class="glass-card">
-            <input type="text" id="inp-username" placeholder="Username" onchange="updateUsername()" style="font-size:1.5rem; border:none; border-bottom:1px solid #555;">
-            <button id="btn-login" class="btn-main btn-google" onclick="googleLogin()">Sign in with Google</button>
+        <h3>VIP Access</h3>
+        <div class="glass-card login-card">
+            <img src="" id="user-avatar" class="login-avatar" alt="Avatar">
+            <div id="login-msg" class="login-status">Sign in to sync your progress across devices.</div>
+            
+            <button id="btn-login" class="btn-main btn-google" onclick="googleLogin()">
+                <span style="font-size:1.2rem;">G</span> Sign in with Google
+            </button>
+            
+            <button id="btn-logout" class="btn-main" style="background:#333; display:none; margin-top:10px;" onclick="googleLogout()">
+                Log Out
+            </button>
         </div>
+
         <h3>Activity (Last 7 Days)</h3>
         <div class="glass-card">
             <div class="chart-container" id="activity-chart"></div>
@@ -235,10 +251,8 @@
             <div class="stat-label">MINUTES</div>
             <select id="sound-select" style="margin-top:20px;">
                 <option value="silent">🔕 Silence</option>
-                <option value="rain">🌧️ Rain</option>
-                <option value="forest">🐦 Forest</option>
-                <option value="waves">🌊 Waves</option>
-                <option value="fire">🔥 Fire</option>
+                <option value="rain">🌧️ Heavy Rain</option>
+                <option value="fire">🔥 Crackling Fire</option>
             </select>
             <button class="btn-main" style="margin-top:20px;" onclick="startFocus()">Start Timer</button>
         </div>
@@ -250,6 +264,7 @@
             <input type="date" id="edit-date">
             <input type="text" id="edit-name">
             <input type="text" id="edit-subject">
+            <input type="text" id="edit-link" placeholder="Link URL">
             <input type="color" id="edit-color" style="height:40px;">
             <label class="stat-label">Cycle (0-5)</label>
             <input type="number" id="edit-cycle" min="0">
@@ -282,11 +297,16 @@
         // 🔥 PASTE FIREBASE CONFIG HERE
         // ----------------------------------------------------
         const firebaseConfig = {
-            apiKey: "AIzaSyCU60A6NFnkT7LdlvfG8ccjATRxDcl0h7Q",
+           apiKey: "AIzaSyCU60A6NFnkT7LdlvfG8ccjATRxDcl0h7Q",
+
             authDomain: "neonfocus-7916e.firebaseapp.com",
+
             projectId: "neonfocus-7916e",
+
             storageBucket: "neonfocus-7916e.firebasestorage.app",
+
             messagingSenderId: "566455115224",
+
             appId: "1:566455115224:web:72759e5145f6bc915766ad"
         };
         // ----------------------------------------------------
@@ -309,7 +329,6 @@
         let timerInt, currentAudioEl, editingId;
         let calDate = new Date();
 
-        /* --- HYBRID DATABASE --- */
         const DB = {
             open: () => {
                 return new Promise((resolve) => {
@@ -323,19 +342,13 @@
                 });
             },
             saveData: () => {
-                // 1. Save Text to Local DB
                 let tx = db.transaction(['data'], 'readwrite');
                 tx.objectStore('data').put({ id: 'main', ...appData });
-                
-                // 2. Sync Text to Cloud (If Configured & Logged In)
                 if(user && firestore) {
-                    firestore.collection('users').doc(user.uid).set(appData)
-                        .then(() => console.log("Cloud Synced"))
-                        .catch(e => console.log("Sync Error", e));
+                    firestore.collection('users').doc(user.uid).set(appData).catch(e => console.log(e));
                 }
             },
             saveFile: (id, file) => {
-                // Files always stay Local (IndexedDB)
                 let tx = db.transaction(['files'], 'readwrite');
                 tx.objectStore('files').put({ id: id, file: file });
             },
@@ -352,54 +365,67 @@
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
             if ("Notification" in window) Notification.requestPermission();
 
-            // Init Cloud
             if (typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
                 firebase.initializeApp(firebaseConfig);
                 firestore = firebase.firestore();
                 auth = firebase.auth();
                 auth.onAuthStateChanged(u => {
                     user = u;
-                    if(user) {
-                        document.getElementById('btn-login').innerText = "Logged in: " + user.displayName;
-                        document.getElementById('auth-status').innerText = "V16.0 (Connected)";
-                        loadFromCloud();
-                    }
+                    updateAuthUI();
+                    if(user) loadFromCloud();
                 });
             }
 
             await DB.open();
 
-            // Load Local Data
             let tx = db.transaction(['data'], 'readonly');
             let req = tx.objectStore('data').get('main');
             
             req.onsuccess = async () => {
                 if (req.result) appData = req.result;
                 else {
-                    // Fallback to old keys for migration
                     let old = localStorage.getItem('neon_focus_v14_db') || localStorage.getItem('neon_focus_v13_1');
                     if(old) { try{ appData = JSON.parse(old); DB.saveData(); } catch(e){} }
                     else DB.saveData();
                 }
                 
                 if(!appData.tasks) appData.tasks = [];
-                if(appData.username) document.getElementById('inp-username').value = appData.username;
                 document.body.className = `theme-${appData.theme || 'neon'}`;
                 checkStreak();
                 renderAll();
             };
         }
 
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('btn-login');
+            const logoutBtn = document.getElementById('btn-logout');
+            const statusMsg = document.getElementById('login-msg');
+            const avatar = document.getElementById('user-avatar');
+
+            if (user) {
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                statusMsg.innerHTML = `Welcome back, <b>${user.displayName}</b>!<br><span style="color:var(--success)">● Premium Active</span>`;
+                avatar.src = user.photoURL;
+                avatar.style.display = 'block';
+                document.getElementById('auth-status').innerText = "V17.0 (Connected)";
+            } else {
+                loginBtn.style.display = 'flex';
+                logoutBtn.style.display = 'none';
+                statusMsg.innerText = "Sign in to sync your progress across devices.";
+                avatar.style.display = 'none';
+                document.getElementById('auth-status').innerText = "V17.0 (Offline)";
+            }
+        }
+
         function loadFromCloud() {
             if(!user || !firestore) return;
             firestore.collection('users').doc(user.uid).get().then(doc => {
                 if(doc.exists) {
-                    let cloudData = doc.data();
-                    // Smart Merge: Keep local streaks if higher? For now, Cloud wins to ensure sync.
-                    appData = cloudData;
+                    appData = doc.data();
                     DB.saveData();
                     renderAll();
-                    showToast("Data pulled from Cloud");
+                    showToast("Synced from Cloud");
                 }
             });
         }
@@ -410,7 +436,17 @@
             auth.signInWithPopup(provider).catch(e => alert(e.message));
         }
 
-        /* --- NAVIGATION --- */
+        function googleLogout() {
+            auth.signOut().then(() => {
+                // Clear local data on logout for safety? Optional. 
+                // For now, we keep it but reload UI.
+                user = null;
+                updateAuthUI();
+                showToast("Logged Out");
+                window.location.reload(); // Refresh to clear state
+            });
+        }
+
         function switchView(viewId, btn) {
             stopFocus();
             closeModal();
@@ -427,12 +463,13 @@
 
         function closeModal() { document.getElementById('edit-modal').classList.remove('open'); editingId = null; }
         function showToast(msg) { let t = document.getElementById('toast'); t.innerText=msg; t.className='show'; setTimeout(()=>t.className='',3000); }
-        function updateFileLabel(inp) { document.getElementById('file-label').innerText = inp.files[0] ? "Selected: " + inp.files[0].name : "📎 Attach File"; }
+        function updateFileLabel(inp) { document.getElementById('file-label').innerText = inp.files[0] ? "Selected: " + inp.files[0].name : "📂 Attach File (Local)"; }
 
-        /* --- TOPICS & FILES --- */
+        /* --- ADD TOPIC (LINK + FILE) --- */
         function addTopic() {
             let sub = document.getElementById('inp-subject').value;
             let top = document.getElementById('inp-topic').value;
+            let link = document.getElementById('inp-link').value;
             let fileInput = document.getElementById('inp-file');
             
             if(!sub || !top) return showToast('Missing Fields');
@@ -447,6 +484,7 @@
 
             appData.topics.push({ 
                 id: topicId, subject: sub, topic: top, 
+                link: link, 
                 hasFile: hasFile, fileName: hasFile ? fileInput.files[0].name : '',
                 subjectColor: document.getElementById('inp-color').value, 
                 notes: '', cycle: 0, nextDate: new Date().toISOString().split('T')[0] 
@@ -455,12 +493,12 @@
             DB.saveData(); 
             renderAll(); 
             document.getElementById('inp-topic').value = '';
+            document.getElementById('inp-link').value = '';
             fileInput.value = '';
-            document.getElementById('file-label').innerText = "📎 Attach File";
+            document.getElementById('file-label').innerText = "📂 Attach File (Local)";
             showToast('Topic Added');
         }
 
-        /* --- RENDERING --- */
         function renderAll() { renderDashboard(); renderSubjects(); }
         
         async function createCardHTML(t, isDue) {
@@ -475,12 +513,18 @@
                 }
             }
 
-            // Fixed Notes Button: Using ID as String
+            let linkBtn = '';
+            if (t.link) {
+                linkBtn = `<a href="${t.link}" target="_blank" class="btn-link">🔗 Open Link</a>`;
+            }
+
             div.innerHTML = `
                 <div class="cycle-badge" style="background:${t.subjectColor}">C${t.cycle}</div>
                 <div style="font-size:0.8rem; color:${t.subjectColor}">${t.subject}</div>
                 <div style="font-size:1.1rem; font-weight:bold;">${t.topic}</div>
-                ${fileBtn}
+                <div style="margin-top:5px;">
+                    ${linkBtn} ${fileBtn}
+                </div>
                 <div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;">
                     <div style="font-size:0.8rem; color:#888;">${t.nextDate}</div>
                     <div>
@@ -529,19 +573,14 @@
         
         function toggleNotes(id) { 
             let el = document.getElementById(`notes-${id}`);
-            if(el) {
-                // Force inline style check
-                if(el.style.display === 'block') el.style.display = 'none';
-                else el.style.display = 'block';
-            }
+            if(el) { if(el.style.display === 'block') el.style.display = 'none'; else el.style.display = 'block'; }
         }
         
         function saveNote(id, val) { let t = appData.topics.find(x => x.id == id); if(t) { t.notes = val; DB.saveData(); } }
         function deleteTopic() { if(confirm('Delete?')) { appData.topics = appData.topics.filter(x => x.id != editingId); DB.saveData(); renderAll(); closeModal(); } }
-        function openEdit(id) { editingId = id; let t = appData.topics.find(x => x.id == id); document.getElementById('edit-date').value = t.nextDate; document.getElementById('edit-name').value = t.topic; document.getElementById('edit-subject').value = t.subject; document.getElementById('edit-color').value = t.subjectColor; document.getElementById('edit-cycle').value = t.cycle; document.getElementById('edit-modal').classList.add('open'); }
-        function saveEdit() { let t = appData.topics.find(x => x.id == editingId); if(t) { t.nextDate = document.getElementById('edit-date').value; t.topic = document.getElementById('edit-name').value; t.subject = document.getElementById('edit-subject').value; t.subjectColor = document.getElementById('edit-color').value; t.cycle = parseInt(document.getElementById('edit-cycle').value); DB.saveData(); renderAll(); closeModal(); } }
+        function openEdit(id) { editingId = id; let t = appData.topics.find(x => x.id == id); document.getElementById('edit-date').value = t.nextDate; document.getElementById('edit-name').value = t.topic; document.getElementById('edit-subject').value = t.subject; document.getElementById('edit-link').value = t.link || ''; document.getElementById('edit-color').value = t.subjectColor; document.getElementById('edit-cycle').value = t.cycle; document.getElementById('edit-modal').classList.add('open'); }
+        function saveEdit() { let t = appData.topics.find(x => x.id == editingId); if(t) { t.nextDate = document.getElementById('edit-date').value; t.topic = document.getElementById('edit-name').value; t.subject = document.getElementById('edit-subject').value; t.link = document.getElementById('edit-link').value; t.subjectColor = document.getElementById('edit-color').value; t.cycle = parseInt(document.getElementById('edit-cycle').value); DB.saveData(); renderAll(); closeModal(); } }
 
-        /* --- TASKS --- */
         function addNewTask() {
             let input = document.getElementById('task-input');
             if(!input.value.trim()) return showToast('Enter task name');
@@ -573,7 +612,6 @@
             }
         }
 
-        /* --- CALENDAR --- */
         function changeMonth(delta) { calDate.setMonth(calDate.getMonth() + delta); renderCalendar(); }
         function renderCalendar() {
             let year = calDate.getFullYear(); let month = calDate.getMonth();
@@ -593,7 +631,6 @@
             }
         }
 
-        /* --- PROFILE --- */
         function renderProfileStats() {
             let chart = document.getElementById('activity-chart'); chart.innerHTML = '';
             let days = []; for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate()-i); days.push(d.toISOString().split('T')[0]); }
@@ -610,7 +647,6 @@
             });
         }
 
-        /* --- UTILS --- */
         function checkStreak() {
             let today = new Date().toDateString();
             if(appData.lastLogin !== today) {
