@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeonFocus V14 DB</title>
+    <title>NeonFocus V15 Cloud</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
     
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
     <style>
         :root {
             --bg-dark: #050505;
@@ -61,6 +65,13 @@
         .big-number { font-size: 2.2rem; color: var(--primary); line-height: 1; }
         .stat-label { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
         
+        .mastery-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .mastery-val { 
+            font-size: 1.8rem; font-weight: 700; 
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
         .subject-item, .task-item { display: flex; flex-direction: column; gap: 8px; padding-right: 10px; }
         .cycle-badge { position: absolute; top: 0; right: 0; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 0.7rem; font-weight: bold; padding: 4px 10px; border-bottom-left-radius: 12px; }
         
@@ -82,7 +93,6 @@
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.8; padding: 5px; color: white; }
         .btn-revised { background: var(--primary); color: black; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
         
-        /* New File Upload Button */
         .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-bottom: 10px; }
         .file-upload-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
         .file-btn { display: block; background: rgba(255,255,255,0.1); border: 1px dashed var(--primary); color: var(--primary); text-align: center; padding: 10px; border-radius: 12px; font-size: 0.9rem; }
@@ -117,8 +127,13 @@
         .nav-icon { font-size: 1.4rem; opacity: 0.5; transition: 0.3s; cursor: pointer; }
         .nav-icon.active { opacity: 1; color: var(--primary); transform: scale(1.2); }
 
-        .notes-area { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .notes-area.visible { display: block; }
+        /* FIXED NOTES AREA */
+        .notes-area { 
+            display: none; /* Hidden by default */
+            margin-top: 10px; 
+            padding-top: 10px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+        }
         
         #toast { visibility: hidden; min-width: 250px; background-color: #1e1e1e; color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 10000; left: 50%; bottom: 100px; transform: translateX(-50%); border: 1px solid var(--primary); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
@@ -135,7 +150,7 @@
 
     <header>
         <div class="brand">NeonFocus</div>
-        <div style="font-size:0.8rem; color:var(--text-muted)">V14.0 DB</div>
+        <div id="auth-status" style="font-size:0.8rem; color:var(--text-muted)">V15.0 (Local)</div>
     </header>
 
     <section id="view-dashboard" class="view active">
@@ -189,12 +204,10 @@
             <input type="text" id="inp-subject" placeholder="Subject">
             <input type="text" id="inp-topic" placeholder="Topic">
             <input type="color" id="inp-color" value="#00f2ff" style="height:45px; padding:5px;">
-            
             <div class="file-upload-wrapper">
                 <div class="file-btn" id="file-label">📎 Attach File (PDF/Img)</div>
                 <input type="file" id="inp-file" onchange="updateFileLabel(this)">
             </div>
-
             <button class="btn-main" onclick="addTopic()">+ Add Revision Topic</button>
         </div>
         <h3>Library</h3>
@@ -205,6 +218,7 @@
         <h3>Profile</h3>
         <div class="glass-card">
             <input type="text" id="inp-username" placeholder="Username" onchange="updateUsername()" style="font-size:1.5rem; border:none; border-bottom:1px solid #555;">
+            <button id="btn-login" class="btn-main" style="background:#4285F4; margin-top:10px;" onclick="googleLogin()">Sign in with Google</button>
         </div>
         <h3>Activity (Last 7 Days)</h3>
         <div class="glass-card">
@@ -222,7 +236,7 @@
                 <option value="blackout">Blackout</option>
                 <option value="warm">Warm</option>
             </select>
-            <button class="btn-main" onclick="exportData()" style="margin-top:10px;">Backup JSON</button>
+            <button class="btn-main" onclick="exportData()" style="margin-top:10px;">Backup Local Data</button>
         </div>
     </section>
 
@@ -276,6 +290,19 @@
     </nav>
 
     <script>
+        // ----------------------------------------------------
+        // 🔥 STEP 1: PASTE YOUR FIREBASE CONFIG HERE
+        // ----------------------------------------------------
+        const firebaseConfig = {
+            apiKey: "AIzaSyCU60A6NFnkT7LdlvfG8ccjATRxDcl0h7Q",
+            authDomain: "neonfocus-7916e.firebaseapp.com",
+            projectId: "neonfocus-7916e",
+            storageBucket: "neonfocus-7916e.firebasestorage.app",
+            messagingSenderId: "566455115224",
+            appId: "1:566455115224:web:72759e5145f6bc915766ad"
+        };
+        // ----------------------------------------------------
+
         const DB_NAME = 'NeonFocusDB';
         const DB_VERSION = 1;
         const DEFAULT_INTERVALS = [3, 7, 14, 30, 60];
@@ -289,15 +316,15 @@
             { id: 'legend', name: 'Legend', icon: '💎', condition: (d) => d.streak >= 30 }
         ];
 
-        let db;
-        let appData = { topics: [], history: [], tasks: [], streak: 0, lastLogin: '', customIntervals: DEFAULT_INTERVALS, theme: 'neon', username: '' };
+        let db, firestore, auth, user;
+        let appData = { topics: [], history: [], tasks: [], streak: 0, lastLogin: '', customIntervals: DEFAULT_INTERVALS, theme: 'neon', subjectColors: {} };
         let timerInt, currentAudioEl, editingId;
         let calDate = new Date();
 
-        /* --- INDEXEDDB HELPER --- */
+        /* --- DATABASE LAYER (HYBRID) --- */
         const DB = {
             open: () => {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve) => {
                     let req = indexedDB.open(DB_NAME, DB_VERSION);
                     req.onupgradeneeded = (e) => {
                         let d = e.target.result;
@@ -305,12 +332,19 @@
                         if (!d.objectStoreNames.contains('files')) d.createObjectStore('files', { keyPath: 'id' });
                     };
                     req.onsuccess = (e) => { db = e.target.result; resolve(db); };
-                    req.onerror = (e) => reject(e);
                 });
             },
             saveData: () => {
+                // 1. Save to Local IndexedDB
                 let tx = db.transaction(['data'], 'readwrite');
                 tx.objectStore('data').put({ id: 'main', ...appData });
+                
+                // 2. Sync to Firebase if logged in
+                if(user && firestore) {
+                    firestore.collection('users').doc(user.uid).set(appData)
+                        .then(() => console.log("Synced to Cloud"))
+                        .catch(e => console.error("Cloud Sync Error", e));
+                }
             },
             saveFile: (id, file) => {
                 let tx = db.transaction(['files'], 'readwrite');
@@ -329,9 +363,25 @@
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
             if ("Notification" in window) Notification.requestPermission();
 
+            // Init Firebase if config exists
+            if (firebaseConfig.apiKey) {
+                firebase.initializeApp(firebaseConfig);
+                firestore = firebase.firestore();
+                auth = firebase.auth();
+                
+                auth.onAuthStateChanged(u => {
+                    user = u;
+                    if(user) {
+                        document.getElementById('btn-login').innerText = "Logged in as " + user.displayName;
+                        document.getElementById('auth-status').innerText = "V15.0 (Cloud Connected)";
+                        loadFromCloud(); // Pull cloud data on login
+                    }
+                });
+            }
+
             await DB.open();
 
-            // Load Data from DB
+            // Load Data from Local DB first
             let tx = db.transaction(['data'], 'readonly');
             let req = tx.objectStore('data').get('main');
             
@@ -339,26 +389,44 @@
                 if (req.result) {
                     appData = req.result;
                 } else {
-                    // MIGRATION: Check LocalStorage if DB is empty
-                    let old = localStorage.getItem('neon_focus_v13_1') || localStorage.getItem('neon_focus_v12_fresh');
-                    if (old) {
-                        try { appData = JSON.parse(old); DB.saveData(); showToast("Migrated to Database!"); } catch(e){}
-                    } else {
-                        DB.saveData(); // Init fresh
-                    }
+                    // Fallback to old LocalStorage if DB empty
+                    let old = localStorage.getItem('neon_focus_v13_1');
+                    if(old) { try { appData = JSON.parse(old); DB.saveData(); } catch(e){} }
+                    else DB.saveData();
                 }
-                
-                // Ensure arrays exist
-                if(!appData.tasks) appData.tasks = [];
-                if(!appData.topics) appData.topics = [];
-                if(!appData.history) appData.history = [];
-
-                if(appData.username) document.getElementById('inp-username').value = appData.username;
-                document.body.className = `theme-${appData.theme || 'neon'}`;
-                
-                checkStreak();
-                renderAll();
+                renderUI();
             };
+        }
+
+        function loadFromCloud() {
+            if(!user || !firestore) return;
+            firestore.collection('users').doc(user.uid).get().then(doc => {
+                if(doc.exists) {
+                    appData = doc.data();
+                    DB.saveData(); // Update local with cloud data
+                    renderUI();
+                    showToast("Synced from Cloud");
+                }
+            });
+        }
+
+        function googleLogin() {
+            if(!auth) return alert("Please add Firebase Config in code first!");
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(e => alert(e.message));
+        }
+
+        function renderUI() {
+            if(!appData.tasks) appData.tasks = [];
+            if(!appData.topics) appData.topics = [];
+            if(!appData.history) appData.history = [];
+            
+            document.getElementById('header-date').innerText = new Date().toLocaleDateString();
+            if(appData.username) document.getElementById('inp-username').value = appData.username;
+            document.body.className = `theme-${appData.theme || 'neon'}`;
+            
+            checkStreak();
+            renderAll();
         }
 
         /* --- NAVIGATION --- */
@@ -380,7 +448,7 @@
         function showToast(msg) { let t = document.getElementById('toast'); t.innerText=msg; t.className='show'; setTimeout(()=>t.className='',3000); }
         function updateFileLabel(inp) { document.getElementById('file-label').innerText = inp.files[0] ? "File Selected: " + inp.files[0].name : "📎 Attach File (PDF/Img)"; }
 
-        /* --- TOPICS WITH FILES --- */
+        /* --- TOPICS --- */
         function addTopic() {
             let sub = document.getElementById('inp-subject').value;
             let top = document.getElementById('inp-topic').value;
@@ -405,14 +473,12 @@
             
             DB.saveData(); 
             renderAll(); 
-            
             document.getElementById('inp-topic').value = '';
             fileInput.value = '';
-            document.getElementById('file-label').innerText = "📎 Attach File (PDF/Img)";
             showToast('Topic Added');
         }
 
-        /* --- RENDERING --- */
+        /* --- RENDERING (Notes Fixed) --- */
         function renderAll() { renderDashboard(); renderSubjects(); }
         
         async function createCardHTML(t, isDue) {
@@ -420,7 +486,6 @@
             
             let fileBtn = '';
             if (t.hasFile) {
-                // Async fetch file URL
                 let blob = await DB.getFile(t.id);
                 if (blob) {
                     let url = URL.createObjectURL(blob);
@@ -428,6 +493,7 @@
                 }
             }
 
+            // NOTES FIX: Pass ID as string to prevent issues
             div.innerHTML = `
                 <div class="cycle-badge" style="background:${t.subjectColor}">C${t.cycle}</div>
                 <div style="font-size:0.8rem; color:${t.subjectColor}">${t.subject}</div>
@@ -436,8 +502,8 @@
                 <div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;">
                     <div style="font-size:0.8rem; color:#888;">${t.nextDate}</div>
                     <div>
-                        <button class="btn-icon" onclick="toggleNotes(${t.id})">📝</button>
-                        <button class="btn-icon" onclick="openEdit(${t.id})">⚙️</button>
+                        <button class="btn-icon" onclick="toggleNotes('${t.id}')">📝</button>
+                        <button class="btn-icon" onclick="openEdit('${t.id}')">⚙️</button>
                         ${isDue ? `<button class="btn-revised" onclick="markRevised(${t.id})">✔</button>` : ''}
                     </div>
                 </div>
@@ -458,21 +524,17 @@
             let list = document.getElementById('due-list'); list.innerHTML = '';
             let today = new Date().toISOString().split('T')[0];
             let due = appData.topics.filter(t => t.nextDate <= today);
-            
             document.getElementById('due-count').innerText = due.length;
             document.getElementById('task-count').innerText = (appData.tasks || []).filter(t => !t.completed).length;
             document.getElementById('streak-count').innerText = `🔥 ${appData.streak}`;
             
             if(due.length === 0) list.innerHTML = '<div style="text-align:center; padding:20px; color:#888">All caught up!</div>';
-            
-            due.forEach(async t => {
-                list.appendChild(await createCardHTML(t, true));
-            });
+            due.forEach(async t => { list.appendChild(await createCardHTML(t, true)); });
         }
 
         /* --- STANDARD FUNCTIONS --- */
         function markRevised(id) {
-            let t = appData.topics.find(x => x.id === id); if(!t) return;
+            let t = appData.topics.find(x => x.id == id); if(!t) return;
             if(!appData.history) appData.history = [];
             appData.history.push({date: new Date().toISOString().split('T')[0], title: t.topic, subject: t.subject, color: t.subjectColor});
             let intervals = appData.customIntervals || DEFAULT_INTERVALS;
@@ -482,12 +544,20 @@
             t.nextDate = next.toISOString().split('T')[0];
             DB.saveData(); renderAll(); showToast(`Next review in ${days} days`);
         }
-        function toggleNotes(id) { document.getElementById(`notes-${id}`).classList.toggle('visible'); }
-        function saveNote(id, val) { let t = appData.topics.find(x => x.id === id); if(t) { t.notes = val; DB.saveData(); } }
         
-        function deleteTopic() { if(confirm('Delete?')) { appData.topics = appData.topics.filter(x => x.id !== editingId); DB.saveData(); renderAll(); closeModal(); } }
-        function openEdit(id) { editingId = id; let t = appData.topics.find(x => x.id === id); document.getElementById('edit-date').value = t.nextDate; document.getElementById('edit-name').value = t.topic; document.getElementById('edit-subject').value = t.subject; document.getElementById('edit-color').value = t.subjectColor; document.getElementById('edit-cycle').value = t.cycle; document.getElementById('edit-modal').classList.add('open'); }
-        function saveEdit() { let t = appData.topics.find(x => x.id === editingId); if(t) { t.nextDate = document.getElementById('edit-date').value; t.topic = document.getElementById('edit-name').value; t.subject = document.getElementById('edit-subject').value; t.subjectColor = document.getElementById('edit-color').value; t.cycle = parseInt(document.getElementById('edit-cycle').value); DB.saveData(); renderAll(); closeModal(); } }
+        // FIXED TOGGLE NOTES - Uses inline style manipulation for guaranteed visibility
+        function toggleNotes(id) { 
+            let el = document.getElementById(`notes-${id}`);
+            if(el) {
+                if(el.style.display === 'block') el.style.display = 'none';
+                else el.style.display = 'block';
+            }
+        }
+        
+        function saveNote(id, val) { let t = appData.topics.find(x => x.id == id); if(t) { t.notes = val; DB.saveData(); } }
+        function deleteTopic() { if(confirm('Delete?')) { appData.topics = appData.topics.filter(x => x.id != editingId); DB.saveData(); renderAll(); closeModal(); } }
+        function openEdit(id) { editingId = id; let t = appData.topics.find(x => x.id == id); document.getElementById('edit-date').value = t.nextDate; document.getElementById('edit-name').value = t.topic; document.getElementById('edit-subject').value = t.subject; document.getElementById('edit-color').value = t.subjectColor; document.getElementById('edit-cycle').value = t.cycle; document.getElementById('edit-modal').classList.add('open'); }
+        function saveEdit() { let t = appData.topics.find(x => x.id == editingId); if(t) { t.nextDate = document.getElementById('edit-date').value; t.topic = document.getElementById('edit-name').value; t.subject = document.getElementById('edit-subject').value; t.subjectColor = document.getElementById('edit-color').value; t.cycle = parseInt(document.getElementById('edit-cycle').value); DB.saveData(); renderAll(); closeModal(); } }
 
         /* --- TASKS --- */
         function addNewTask() {
@@ -496,8 +566,8 @@
             appData.tasks.push({ id: Date.now(), text: input.value, date: document.getElementById('task-date').value, tag: document.getElementById('task-tag').value, completed: false });
             DB.saveData(); renderTasks(); input.value = ''; showToast('Task Added');
         }
-        function toggleTask(id) { let t = appData.tasks.find(x => x.id === id); if(t) { t.completed = !t.completed; DB.saveData(); renderTasks(); } }
-        function deleteTaskItem(id) { if(confirm('Delete?')) { appData.tasks = appData.tasks.filter(x => x.id !== id); DB.saveData(); renderTasks(); } }
+        function toggleTask(id) { let t = appData.tasks.find(x => x.id == id); if(t) { t.completed = !t.completed; DB.saveData(); renderTasks(); } }
+        function deleteTaskItem(id) { if(confirm('Delete?')) { appData.tasks = appData.tasks.filter(x => x.id != id); DB.saveData(); renderTasks(); } }
         function renderTasks() {
             let container = document.getElementById('tasks-container'); container.innerHTML = '';
             if(appData.tasks.length === 0) { container.innerHTML = '<div style="text-align:center;color:gray;margin-top:30px;">No tasks.</div>'; return; }
