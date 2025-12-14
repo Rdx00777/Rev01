@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeonFocus V13.0</title>
+    <title>NeonFocus V14 DB</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
     
@@ -58,13 +58,12 @@
             border-radius: 16px; padding: 20px; margin-bottom: 15px; position: relative;
         }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; }
-        .big-number { font-size: 2.5rem; color: var(--primary); line-height: 1; }
+        .big-number { font-size: 2.2rem; color: var(--primary); line-height: 1; }
         .stat-label { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
         
         .subject-item, .task-item { display: flex; flex-direction: column; gap: 8px; padding-right: 10px; }
         .cycle-badge { position: absolute; top: 0; right: 0; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 0.7rem; font-weight: bold; padding: 4px 10px; border-bottom-left-radius: 12px; }
         
-        /* Task Styles */
         .task-header { display: flex; align-items: flex-start; gap: 10px; }
         .task-checkbox {
             min-width: 20px; height: 20px; border: 2px solid var(--text-muted); border-radius: 50%; 
@@ -73,6 +72,7 @@
         .task-checkbox.checked { background: var(--success); border-color: var(--success); }
         .task-checkbox.checked::after { content: '✔'; font-size: 12px; color: black; font-weight: bold; }
         .task-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; margin-left: 5px; }
+        
         .tag-work { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
         .tag-personal { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
         .tag-urgent { background: rgba(239, 68, 68, 0.2); color: #f87171; }
@@ -81,32 +81,30 @@
         .btn-main { width: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; color: white; padding: 15px; border-radius: 12px; font-weight: 700; margin-top: 10px; cursor: pointer; }
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.8; padding: 5px; color: white; }
         .btn-revised { background: var(--primary); color: black; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        
+        /* New File Upload Button */
+        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-bottom: 10px; }
+        .file-upload-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
+        .file-btn { display: block; background: rgba(255,255,255,0.1); border: 1px dashed var(--primary); color: var(--primary); text-align: center; padding: 10px; border-radius: 12px; font-size: 0.9rem; }
+        .btn-download { background: var(--secondary); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; text-decoration: none; display: inline-block; margin-top: 5px; }
 
-        /* CALENDAR STYLES (NEW) */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; margin-top: 10px; }
-        .cal-day-name { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
-        .cal-day { 
-            aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            border-radius: 8px; background: rgba(255,255,255,0.03); font-size: 0.9rem; position: relative;
-        }
+        .cal-day { aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,0.03); font-size: 0.9rem; position: relative; }
         .cal-day.today { border: 1px solid var(--primary); background: rgba(0, 242, 255, 0.1); }
         .cal-dot { width: 6px; height: 6px; background: var(--secondary); border-radius: 50%; margin-top: 4px; }
         .cal-month-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 
-        /* CHART STYLES (NEW) */
         .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 150px; padding-top: 20px; }
         .chart-bar-group { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
         .chart-bar { width: 12px; background: var(--primary); border-radius: 4px; transition: height 0.5s; min-height: 4px; }
         .chart-label { font-size: 0.7rem; color: var(--text-muted); }
 
-        /* BADGES (NEW) */
         .badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .badge { background: rgba(255,255,255,0.05); padding: 15px 5px; border-radius: 12px; text-align: center; opacity: 0.4; filter: grayscale(1); }
         .badge.unlocked { opacity: 1; filter: grayscale(0); border: 1px solid var(--success); background: rgba(0, 255, 136, 0.1); }
         .badge-icon { font-size: 1.5rem; margin-bottom: 5px; }
         .badge-name { font-size: 0.7rem; font-weight: bold; }
 
-        /* Modals & Overlays */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 5000; justify-content: center; align-items: center; }
         .modal.open { display: flex !important; }
         .modal-content { width: 85%; max-width: 350px; max-height: 90vh; overflow-y: auto; }
@@ -137,20 +135,14 @@
 
     <header>
         <div class="brand">NeonFocus</div>
-        <div style="font-size:0.8rem; color:var(--text-muted)">V13.0</div>
+        <div style="font-size:0.8rem; color:var(--text-muted)">V14.0 DB</div>
     </header>
 
     <section id="view-dashboard" class="view active">
         <div class="glass-card">
             <div class="stat-grid">
-                <div style="text-align:center;">
-                    <div class="big-number" id="due-count">0</div>
-                    <div class="stat-label">Due Revisions</div>
-                </div>
-                <div style="text-align:center;">
-                    <div class="big-number" id="task-count">0</div>
-                    <div class="stat-label">To-Do Tasks</div>
-                </div>
+                <div style="text-align:center;"><div class="big-number" id="due-count">0</div><div class="stat-label">Due Revisions</div></div>
+                <div style="text-align:center;"><div class="big-number" id="task-count">0</div><div class="stat-label">To-Do Tasks</div></div>
             </div>
             <div style="text-align:center; margin-top:15px; font-size:0.9rem; color:var(--text-muted);">
                 Current Streak: <span id="streak-count" style="color:var(--primary); font-weight:bold;">🔥 0</span>
@@ -184,8 +176,7 @@
             <button class="btn-icon" onclick="changeMonth(1)">▶</button>
         </div>
         <div class="glass-card">
-            <div class="calendar-grid" id="calendar-grid">
-                </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
         </div>
         <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#888;">
             <span style="color:var(--secondary)">●</span> Revision Due
@@ -198,6 +189,12 @@
             <input type="text" id="inp-subject" placeholder="Subject">
             <input type="text" id="inp-topic" placeholder="Topic">
             <input type="color" id="inp-color" value="#00f2ff" style="height:45px; padding:5px;">
+            
+            <div class="file-upload-wrapper">
+                <div class="file-btn" id="file-label">📎 Attach File (PDF/Img)</div>
+                <input type="file" id="inp-file" onchange="updateFileLabel(this)">
+            </div>
+
             <button class="btn-main" onclick="addTopic()">+ Add Revision Topic</button>
         </div>
         <h3>Library</h3>
@@ -209,18 +206,14 @@
         <div class="glass-card">
             <input type="text" id="inp-username" placeholder="Username" onchange="updateUsername()" style="font-size:1.5rem; border:none; border-bottom:1px solid #555;">
         </div>
-
         <h3>Activity (Last 7 Days)</h3>
         <div class="glass-card">
             <div class="chart-container" id="activity-chart"></div>
         </div>
-
         <h3>Trophy Room</h3>
         <div class="glass-card">
-            <div class="badge-grid" id="badge-grid">
-                </div>
+            <div class="badge-grid" id="badge-grid"></div>
         </div>
-
         <h3>Settings</h3>
         <div class="glass-card">
             <div class="stat-label">Theme</div>
@@ -229,11 +222,7 @@
                 <option value="blackout">Blackout</option>
                 <option value="warm">Warm</option>
             </select>
-            <button class="btn-main" onclick="exportData()" style="margin-top:10px;">Backup Data</button>
-            <div style="position:relative; margin-top:10px;">
-                <button class="btn-main" style="background:#333;">Restore Data</button>
-                <input type="file" onchange="importData(this)" style="position:absolute; top:0; left:0; opacity:0; height:100%;">
-            </div>
+            <button class="btn-main" onclick="exportData()" style="margin-top:10px;">Backup JSON</button>
         </div>
     </section>
 
@@ -287,11 +276,10 @@
     </nav>
 
     <script>
-        const STORAGE_KEY = 'neon_focus_v13'; 
-        const PREV_KEYS = ['neon_focus_v12_fresh', 'neon_focus_master_v1'];
+        const DB_NAME = 'NeonFocusDB';
+        const DB_VERSION = 1;
         const DEFAULT_INTERVALS = [3, 7, 14, 30, 60];
         
-        // BADGES DEFINITION
         const BADGES = [
             { id: 'starter', name: 'Novice', icon: '🌱', condition: (d) => d.history.length >= 1 },
             { id: 'streak3', name: 'On Fire', icon: '🔥', condition: (d) => d.streak >= 3 },
@@ -301,34 +289,77 @@
             { id: 'legend', name: 'Legend', icon: '💎', condition: (d) => d.streak >= 30 }
         ];
 
-        let appData = { topics: [], history: [], tasks: [], streak: 0, lastLogin: '', customIntervals: DEFAULT_INTERVALS, theme: 'neon', subjectColors: {} };
+        let db;
+        let appData = { topics: [], history: [], tasks: [], streak: 0, lastLogin: '', customIntervals: DEFAULT_INTERVALS, theme: 'neon', username: '' };
         let timerInt, currentAudioEl, editingId;
         let calDate = new Date();
 
-        function init() {
-            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-            if ("Notification" in window) Notification.requestPermission(); // Ask for notification permission
-
-            // Migration Logic
-            let raw = localStorage.getItem(STORAGE_KEY);
-            if (raw) {
-                try { appData = JSON.parse(raw); if(!appData.tasks) appData.tasks=[]; } catch(e){}
-            } else {
-                // Try migrating old data
-                for(let k of PREV_KEYS) {
-                    let old = localStorage.getItem(k);
-                    if(old) { try{ appData = JSON.parse(old); if(!appData.tasks) appData.tasks=[]; saveData(); break; } catch(e){} }
-                }
+        /* --- INDEXEDDB HELPER --- */
+        const DB = {
+            open: () => {
+                return new Promise((resolve, reject) => {
+                    let req = indexedDB.open(DB_NAME, DB_VERSION);
+                    req.onupgradeneeded = (e) => {
+                        let d = e.target.result;
+                        if (!d.objectStoreNames.contains('data')) d.createObjectStore('data', { keyPath: 'id' });
+                        if (!d.objectStoreNames.contains('files')) d.createObjectStore('files', { keyPath: 'id' });
+                    };
+                    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+                    req.onerror = (e) => reject(e);
+                });
+            },
+            saveData: () => {
+                let tx = db.transaction(['data'], 'readwrite');
+                tx.objectStore('data').put({ id: 'main', ...appData });
+            },
+            saveFile: (id, file) => {
+                let tx = db.transaction(['files'], 'readwrite');
+                tx.objectStore('files').put({ id: id, file: file });
+            },
+            getFile: (id) => {
+                return new Promise((resolve) => {
+                    let tx = db.transaction(['files'], 'readonly');
+                    let req = tx.objectStore('files').get(id);
+                    req.onsuccess = () => resolve(req.result ? req.result.file : null);
+                });
             }
-            
-            if(appData.username) document.getElementById('inp-username').value = appData.username;
-            document.body.className = `theme-${appData.theme || 'neon'}`;
-            
-            checkStreak();
-            renderAll();
-        }
+        };
 
-        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); }
+        async function init() {
+            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+            if ("Notification" in window) Notification.requestPermission();
+
+            await DB.open();
+
+            // Load Data from DB
+            let tx = db.transaction(['data'], 'readonly');
+            let req = tx.objectStore('data').get('main');
+            
+            req.onsuccess = async () => {
+                if (req.result) {
+                    appData = req.result;
+                } else {
+                    // MIGRATION: Check LocalStorage if DB is empty
+                    let old = localStorage.getItem('neon_focus_v13_1') || localStorage.getItem('neon_focus_v12_fresh');
+                    if (old) {
+                        try { appData = JSON.parse(old); DB.saveData(); showToast("Migrated to Database!"); } catch(e){}
+                    } else {
+                        DB.saveData(); // Init fresh
+                    }
+                }
+                
+                // Ensure arrays exist
+                if(!appData.tasks) appData.tasks = [];
+                if(!appData.topics) appData.topics = [];
+                if(!appData.history) appData.history = [];
+
+                if(appData.username) document.getElementById('inp-username').value = appData.username;
+                document.body.className = `theme-${appData.theme || 'neon'}`;
+                
+                checkStreak();
+                renderAll();
+            };
+        }
 
         /* --- NAVIGATION --- */
         function switchView(viewId, btn) {
@@ -347,42 +378,140 @@
 
         function closeModal() { document.getElementById('edit-modal').classList.remove('open'); editingId = null; }
         function showToast(msg) { let t = document.getElementById('toast'); t.innerText=msg; t.className='show'; setTimeout(()=>t.className='',3000); }
+        function updateFileLabel(inp) { document.getElementById('file-label').innerText = inp.files[0] ? "File Selected: " + inp.files[0].name : "📎 Attach File (PDF/Img)"; }
+
+        /* --- TOPICS WITH FILES --- */
+        function addTopic() {
+            let sub = document.getElementById('inp-subject').value;
+            let top = document.getElementById('inp-topic').value;
+            let fileInput = document.getElementById('inp-file');
+            
+            if(!sub || !top) return showToast('Missing Fields');
+            
+            let topicId = Date.now();
+            let hasFile = false;
+
+            if (fileInput.files.length > 0) {
+                DB.saveFile(topicId, fileInput.files[0]);
+                hasFile = true;
+            }
+
+            appData.topics.push({ 
+                id: topicId, subject: sub, topic: top, 
+                hasFile: hasFile, fileName: hasFile ? fileInput.files[0].name : '',
+                subjectColor: document.getElementById('inp-color').value, 
+                notes: '', cycle: 0, nextDate: new Date().toISOString().split('T')[0] 
+            });
+            
+            DB.saveData(); 
+            renderAll(); 
+            
+            document.getElementById('inp-topic').value = '';
+            fileInput.value = '';
+            document.getElementById('file-label').innerText = "📎 Attach File (PDF/Img)";
+            showToast('Topic Added');
+        }
+
+        /* --- RENDERING --- */
+        function renderAll() { renderDashboard(); renderSubjects(); }
+        
+        async function createCardHTML(t, isDue) {
+            let div = document.createElement('div'); div.className = 'glass-card subject-item';
+            
+            let fileBtn = '';
+            if (t.hasFile) {
+                // Async fetch file URL
+                let blob = await DB.getFile(t.id);
+                if (blob) {
+                    let url = URL.createObjectURL(blob);
+                    fileBtn = `<a href="${url}" download="${t.fileName}" class="btn-download">💾 ${t.fileName}</a>`;
+                }
+            }
+
+            div.innerHTML = `
+                <div class="cycle-badge" style="background:${t.subjectColor}">C${t.cycle}</div>
+                <div style="font-size:0.8rem; color:${t.subjectColor}">${t.subject}</div>
+                <div style="font-size:1.1rem; font-weight:bold;">${t.topic}</div>
+                ${fileBtn}
+                <div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;">
+                    <div style="font-size:0.8rem; color:#888;">${t.nextDate}</div>
+                    <div>
+                        <button class="btn-icon" onclick="toggleNotes(${t.id})">📝</button>
+                        <button class="btn-icon" onclick="openEdit(${t.id})">⚙️</button>
+                        ${isDue ? `<button class="btn-revised" onclick="markRevised(${t.id})">✔</button>` : ''}
+                    </div>
+                </div>
+                <div id="notes-${t.id}" class="notes-area">
+                    <textarea placeholder="Write notes here..." onchange="saveNote(${t.id}, this.value)">${t.notes || ''}</textarea>
+                </div>`;
+            return div;
+        }
+
+        function renderSubjects() {
+            let list = document.getElementById('all-list'); list.innerHTML = '';
+            appData.topics.sort((a,b) => a.subject.localeCompare(b.subject)).forEach(async t => {
+                list.appendChild(await createCardHTML(t, false));
+            });
+        }
+
+        function renderDashboard() {
+            let list = document.getElementById('due-list'); list.innerHTML = '';
+            let today = new Date().toISOString().split('T')[0];
+            let due = appData.topics.filter(t => t.nextDate <= today);
+            
+            document.getElementById('due-count').innerText = due.length;
+            document.getElementById('task-count').innerText = (appData.tasks || []).filter(t => !t.completed).length;
+            document.getElementById('streak-count').innerText = `🔥 ${appData.streak}`;
+            
+            if(due.length === 0) list.innerHTML = '<div style="text-align:center; padding:20px; color:#888">All caught up!</div>';
+            
+            due.forEach(async t => {
+                list.appendChild(await createCardHTML(t, true));
+            });
+        }
+
+        /* --- STANDARD FUNCTIONS --- */
+        function markRevised(id) {
+            let t = appData.topics.find(x => x.id === id); if(!t) return;
+            if(!appData.history) appData.history = [];
+            appData.history.push({date: new Date().toISOString().split('T')[0], title: t.topic, subject: t.subject, color: t.subjectColor});
+            let intervals = appData.customIntervals || DEFAULT_INTERVALS;
+            let days = intervals[t.cycle] || intervals[intervals.length - 1]; 
+            t.cycle = Math.min(t.cycle + 1, intervals.length);
+            let next = new Date(); next.setDate(next.getDate() + days);
+            t.nextDate = next.toISOString().split('T')[0];
+            DB.saveData(); renderAll(); showToast(`Next review in ${days} days`);
+        }
+        function toggleNotes(id) { document.getElementById(`notes-${id}`).classList.toggle('visible'); }
+        function saveNote(id, val) { let t = appData.topics.find(x => x.id === id); if(t) { t.notes = val; DB.saveData(); } }
+        
+        function deleteTopic() { if(confirm('Delete?')) { appData.topics = appData.topics.filter(x => x.id !== editingId); DB.saveData(); renderAll(); closeModal(); } }
+        function openEdit(id) { editingId = id; let t = appData.topics.find(x => x.id === id); document.getElementById('edit-date').value = t.nextDate; document.getElementById('edit-name').value = t.topic; document.getElementById('edit-subject').value = t.subject; document.getElementById('edit-color').value = t.subjectColor; document.getElementById('edit-cycle').value = t.cycle; document.getElementById('edit-modal').classList.add('open'); }
+        function saveEdit() { let t = appData.topics.find(x => x.id === editingId); if(t) { t.nextDate = document.getElementById('edit-date').value; t.topic = document.getElementById('edit-name').value; t.subject = document.getElementById('edit-subject').value; t.subjectColor = document.getElementById('edit-color').value; t.cycle = parseInt(document.getElementById('edit-cycle').value); DB.saveData(); renderAll(); closeModal(); } }
 
         /* --- TASKS --- */
         function addNewTask() {
             let input = document.getElementById('task-input');
             if(!input.value.trim()) return showToast('Enter task name');
-            appData.tasks.push({
-                id: Date.now(), text: input.value,
-                date: document.getElementById('task-date').value ? new Date(document.getElementById('task-date').value).toISOString() : null,
-                tag: document.getElementById('task-tag').value, completed: false
-            });
-            saveData(); renderTasks(); input.value = ''; showToast('Task Added');
+            appData.tasks.push({ id: Date.now(), text: input.value, date: document.getElementById('task-date').value, tag: document.getElementById('task-tag').value, completed: false });
+            DB.saveData(); renderTasks(); input.value = ''; showToast('Task Added');
         }
-        function toggleTask(id) { let t = appData.tasks.find(x => x.id === id); if(t) { t.completed = !t.completed; saveData(); renderTasks(); } }
-        function deleteTaskItem(id) { if(confirm('Delete?')) { appData.tasks = appData.tasks.filter(x => x.id !== id); saveData(); renderTasks(); } }
+        function toggleTask(id) { let t = appData.tasks.find(x => x.id === id); if(t) { t.completed = !t.completed; DB.saveData(); renderTasks(); } }
+        function deleteTaskItem(id) { if(confirm('Delete?')) { appData.tasks = appData.tasks.filter(x => x.id !== id); DB.saveData(); renderTasks(); } }
         function renderTasks() {
             let container = document.getElementById('tasks-container'); container.innerHTML = '';
             if(appData.tasks.length === 0) { container.innerHTML = '<div style="text-align:center;color:gray;margin-top:30px;">No tasks.</div>'; return; }
-            
             let groups = { Overdue: [], Today: [], Upcoming: [], Later: [], Completed: [] };
             let now = new Date(); let today = now.toISOString().split('T')[0];
-
             appData.tasks.forEach(t => {
-                if(t.completed) groups.Completed.push(t);
-                else if(!t.date) groups.Later.push(t);
-                else {
+                if(t.completed) groups.Completed.push(t); else if(!t.date) groups.Later.push(t); else {
                     let d = new Date(t.date); let dStr = t.date.split('T')[0];
-                    if(d < now && dStr !== today) groups.Overdue.push(t);
-                    else if(dStr === today) groups.Today.push(t);
-                    else groups.Upcoming.push(t);
+                    if(d < now && dStr !== today) groups.Overdue.push(t); else if(dStr === today) groups.Today.push(t); else groups.Upcoming.push(t);
                 }
             });
-
             for(let [name, list] of Object.entries(groups)) {
                 if(list.length > 0) {
-                    let title = document.createElement('div'); title.className = 'task-group-title'; title.innerText = `${name} (${list.length})`;
-                    container.appendChild(title);
+                    let title = document.createElement('div'); title.className = 'task-group-title'; title.innerText = `${name} (${list.length})`; container.appendChild(title);
                     list.forEach(t => {
                         let div = document.createElement('div'); div.className = 'glass-card task-item';
                         div.innerHTML = `<div class="task-header"><div class="task-checkbox ${t.completed?'checked':''}" onclick="toggleTask(${t.id})"></div><div style="flex:1"><div style="${t.completed?'opacity:0.5;text-decoration:line-through':''}">${t.text} <span class="task-tag tag-${t.tag}">${t.tag}</span></div><div style="font-size:0.8rem;color:#888">${t.date?new Date(t.date).toLocaleDateString():''}</div></div><button class="btn-icon" onclick="deleteTaskItem(${t.id})">🗑️</button></div>`;
@@ -392,121 +521,42 @@
             }
         }
 
-        /* --- CALENDAR (NEW) --- */
+        /* --- CALENDAR --- */
         function changeMonth(delta) { calDate.setMonth(calDate.getMonth() + delta); renderCalendar(); }
         function renderCalendar() {
             let year = calDate.getFullYear(); let month = calDate.getMonth();
             document.getElementById('cal-month-display').innerText = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' });
-            
             let firstDay = new Date(year, month, 1).getDay();
             let daysInMonth = new Date(year, month + 1, 0).getDate();
             let grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
-
-            // Day Headers
-            ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
-                grid.innerHTML += `<div class="cal-day-name">${d}</div>`;
-            });
-
-            // Empty slots
+            ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => grid.innerHTML += `<div class="cal-day-name">${d}</div>`);
             for(let i=0; i<firstDay; i++) grid.innerHTML += `<div></div>`;
-
             let todayStr = new Date().toISOString().split('T')[0];
-
             for(let d=1; d<=daysInMonth; d++) {
-                let cellDate = new Date(year, month, d).toISOString().split('T')[0]; // Format YYYY-MM-DD
+                let cellDate = new Date(year, month, d).toISOString().split('T')[0];
                 let count = appData.topics.filter(t => t.nextDate === cellDate).length;
                 let isToday = cellDate === todayStr;
-                
                 let dotHtml = count > 0 ? `<div class="cal-dot"></div>` : '';
                 grid.innerHTML += `<div class="cal-day ${isToday?'today':''}">${d}${dotHtml}</div>`;
             }
         }
 
-        /* --- PROFILE STATS & BADGES (NEW) --- */
+        /* --- PROFILE --- */
         function renderProfileStats() {
-            // 1. Chart (Last 7 Days)
             let chart = document.getElementById('activity-chart'); chart.innerHTML = '';
-            let days = [];
-            for(let i=6; i>=0; i--) {
-                let d = new Date(); d.setDate(d.getDate()-i);
-                days.push(d.toISOString().split('T')[0]);
-            }
-            
-            let maxCount = 0;
-            let counts = days.map(day => {
-                let c = (appData.history || []).filter(h => h.date === day).length;
-                if(c > maxCount) maxCount = c;
-                return c;
-            });
-
+            let days = []; for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate()-i); days.push(d.toISOString().split('T')[0]); }
+            let maxCount = 0; let counts = days.map(day => { let c = (appData.history || []).filter(h => h.date === day).length; if(c > maxCount) maxCount = c; return c; });
             counts.forEach((c, idx) => {
                 let height = maxCount > 0 ? (c / maxCount) * 100 : 0;
                 let dayLabel = new Date(days[idx]).toLocaleDateString('en-US', {weekday:'narrow'});
-                chart.innerHTML += `
-                    <div class="chart-bar-group">
-                        <div class="chart-bar" style="height:${Math.max(height, 5)}%; opacity:${c>0?1:0.3}"></div>
-                        <div class="chart-label">${dayLabel}</div>
-                    </div>`;
+                chart.innerHTML += `<div class="chart-bar-group"><div class="chart-bar" style="height:${Math.max(height, 5)}%; opacity:${c>0?1:0.3}"></div><div class="chart-label">${dayLabel}</div></div>`;
             });
-
-            // 2. Badges
             let badgeGrid = document.getElementById('badge-grid'); badgeGrid.innerHTML = '';
             BADGES.forEach(b => {
                 let unlocked = b.condition(appData);
-                badgeGrid.innerHTML += `
-                    <div class="badge ${unlocked?'unlocked':''}">
-                        <div class="badge-icon">${b.icon}</div>
-                        <div class="badge-name">${b.name}</div>
-                    </div>`;
+                badgeGrid.innerHTML += `<div class="badge ${unlocked?'unlocked':''}"><div class="badge-icon">${b.icon}</div><div class="badge-name">${b.name}</div></div>`;
             });
         }
-
-        /* --- CORE LOGIC --- */
-        function addTopic() {
-            let sub = document.getElementById('inp-subject').value;
-            let top = document.getElementById('inp-topic').value;
-            if(!sub || !top) return showToast('Missing Fields');
-            appData.topics.push({ id: Date.now(), subject: sub, topic: top, subjectColor: document.getElementById('inp-color').value, notes: '', cycle: 0, nextDate: new Date().toISOString().split('T')[0] });
-            saveData(); renderAll(); document.getElementById('inp-topic').value = ''; showToast('Topic Added');
-        }
-        function markRevised(id) {
-            let t = appData.topics.find(x => x.id === id);
-            if(!t) return;
-            if(!appData.history) appData.history = [];
-            appData.history.push({date: new Date().toISOString().split('T')[0], title: t.topic, subject: t.subject, color: t.subjectColor});
-            let intervals = appData.customIntervals || DEFAULT_INTERVALS;
-            let days = intervals[t.cycle] || intervals[intervals.length - 1]; 
-            t.cycle = Math.min(t.cycle + 1, intervals.length);
-            let next = new Date(); next.setDate(next.getDate() + days);
-            t.nextDate = next.toISOString().split('T')[0];
-            saveData(); renderAll(); showToast(`Next review in ${days} days`);
-        }
-        function deleteTopic() { if(confirm('Delete?')) { appData.topics = appData.topics.filter(x => x.id !== editingId); saveData(); renderAll(); closeModal(); } }
-        function openEdit(id) { editingId = id; let t = appData.topics.find(x => x.id === id); document.getElementById('edit-date').value = t.nextDate; document.getElementById('edit-name').value = t.topic; document.getElementById('edit-subject').value = t.subject; document.getElementById('edit-color').value = t.subjectColor; document.getElementById('edit-cycle').value = t.cycle; document.getElementById('edit-modal').classList.add('open'); }
-        function saveEdit() { let t = appData.topics.find(x => x.id === editingId); if(t) { t.nextDate = document.getElementById('edit-date').value; t.topic = document.getElementById('edit-name').value; t.subject = document.getElementById('edit-subject').value; t.subjectColor = document.getElementById('edit-color').value; t.cycle = parseInt(document.getElementById('edit-cycle').value); saveData(); renderAll(); closeModal(); } }
-
-        function renderAll() { renderDashboard(); renderSubjects(); }
-        function renderDashboard() {
-            let list = document.getElementById('due-list'); list.innerHTML = '';
-            let today = new Date().toISOString().split('T')[0];
-            let due = appData.topics.filter(t => t.nextDate <= today);
-            document.getElementById('due-count').innerText = due.length;
-            document.getElementById('task-count').innerText = (appData.tasks || []).filter(t => !t.completed).length;
-            document.getElementById('streak-count').innerText = `🔥 ${appData.streak}`;
-            if(due.length === 0) list.innerHTML = '<div style="text-align:center; padding:20px; color:#888">All caught up!</div>';
-            due.forEach(t => list.appendChild(createCardHTML(t, true)));
-        }
-        function renderSubjects() {
-            let list = document.getElementById('all-list'); list.innerHTML = '';
-            appData.topics.sort((a,b) => a.subject.localeCompare(b.subject)).forEach(t => list.appendChild(createCardHTML(t, false)));
-        }
-        function createCardHTML(t, isDue) {
-            let div = document.createElement('div'); div.className = 'glass-card subject-item';
-            div.innerHTML = `<div class="cycle-badge" style="background:${t.subjectColor}">C${t.cycle}</div><div style="font-size:0.8rem; color:${t.subjectColor}">${t.subject}</div><div style="font-size:1.1rem; font-weight:bold;">${t.topic}</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><div style="font-size:0.8rem; color:#888;">${t.nextDate}</div><div><button class="btn-icon" onclick="toggleNotes(${t.id})">📝</button><button class="btn-icon" onclick="openEdit(${t.id})">⚙️</button>${isDue ? `<button class="btn-revised" onclick="markRevised(${t.id})">✔</button>` : ''}</div></div><div id="notes-${t.id}" class="notes-area"><textarea onchange="saveNote(${t.id}, this.value)">${t.notes || ''}</textarea></div>`;
-            return div;
-        }
-        function toggleNotes(id) { document.getElementById(`notes-${id}`).classList.toggle('visible'); }
-        function saveNote(id, val) { let t = appData.topics.find(x => x.id === id); if(t) { t.notes = val; saveData(); } }
 
         /* --- UTILS --- */
         function checkStreak() {
@@ -514,53 +564,34 @@
             if(appData.lastLogin !== today) {
                 let y = new Date(); y.setDate(y.getDate()-1);
                 if(appData.lastLogin === y.toDateString()) appData.streak++; else appData.streak=1;
-                appData.lastLogin = today; saveData();
+                appData.lastLogin = today; DB.saveData();
             }
         }
-        function switchTheme(t) { document.body.className = `theme-${t}`; appData.theme=t; saveData(); }
-        function updateIntervals() { appData.customIntervals = document.getElementById('inp-intervals').value.split(',').map(Number); saveData(); showToast('Saved'); }
-        function updateUsername() { appData.username = document.getElementById('inp-username').value; saveData(); }
+        function switchTheme(t) { document.body.className = `theme-${t}`; appData.theme=t; DB.saveData(); }
+        function updateIntervals() { appData.customIntervals = document.getElementById('inp-intervals').value.split(',').map(Number); DB.saveData(); showToast('Saved'); }
+        function updateUsername() { appData.username = document.getElementById('inp-username').value; DB.saveData(); }
         function exportData() { let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(appData)], {type: "application/json"})); a.download = `neon_backup.json`; a.click(); }
-        function importData(input) { let r = new FileReader(); r.onload = e => { try { appData = JSON.parse(e.target.result); saveData(); renderAll(); showToast("Restored"); } catch(e){alert("Error");} }; r.readAsText(input.files[0]); }
+        function importData(input) { let r = new FileReader(); r.onload = e => { try { appData = JSON.parse(e.target.result); DB.saveData(); renderAll(); showToast("Restored"); } catch(e){alert("Error");} }; r.readAsText(input.files[0]); }
 
-        /* --- TIMER & NOTIFICATIONS --- */
         function startFocus() {
             let mins = document.getElementById('timer-input').value;
             let secs = mins * 60;
             let sound = document.getElementById('sound-select').value;
-            
             if(currentAudioEl) { currentAudioEl.pause(); currentAudioEl.currentTime = 0; }
-            if(sound !== 'silent') {
-                currentAudioEl = document.getElementById(`audio-${sound}`);
-                if(currentAudioEl) currentAudioEl.play().catch(e => console.log("Audio blocked"));
-            }
-
+            if(sound !== 'silent') { currentAudioEl = document.getElementById(`audio-${sound}`); if(currentAudioEl) currentAudioEl.play().catch(e => console.log("Audio blocked")); }
             document.getElementById('timer-overlay').classList.add('visible');
             if(navigator.wakeLock) navigator.wakeLock.request('screen');
-
             timerInt = setInterval(() => {
                 secs--;
                 let m = Math.floor(secs/60).toString().padStart(2,'0');
                 let s = (secs%60).toString().padStart(2,'0');
                 document.getElementById('timer-display').innerText = `${m}:${s}`;
-                if(secs <= 0) { 
-                    clearInterval(timerInt); 
-                    // SEND NOTIFICATION
-                    if (Notification.permission === "granted") new Notification("Time's Up! Focus session complete.");
-                    else alert('Time Up!'); 
-                    stopFocus(); 
-                }
+                if(secs <= 0) { clearInterval(timerInt); if(Notification.permission==="granted") new Notification("Time's Up!"); else alert('Time Up!'); stopFocus(); }
             }, 1000);
         }
-
-        function stopFocus() {
-            clearInterval(timerInt);
-            if(currentAudioEl) { currentAudioEl.pause(); currentAudioEl.currentTime = 0; }
-            document.getElementById('timer-overlay').classList.remove('visible');
-        }
+        function stopFocus() { clearInterval(timerInt); if(currentAudioEl) { currentAudioEl.pause(); currentAudioEl.currentTime = 0; } document.getElementById('timer-overlay').classList.remove('visible'); }
 
         init();
     </script>
 </body>
 </html>
-
