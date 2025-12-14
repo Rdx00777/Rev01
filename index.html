@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeonFocus V15 Cloud</title>
+    <title>NeonFocus V16 Hybrid</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
     
@@ -65,13 +65,6 @@
         .big-number { font-size: 2.2rem; color: var(--primary); line-height: 1; }
         .stat-label { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
         
-        .mastery-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .mastery-val { 
-            font-size: 1.8rem; font-weight: 700; 
-            background: linear-gradient(45deg, var(--secondary), var(--primary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
         .subject-item, .task-item { display: flex; flex-direction: column; gap: 8px; padding-right: 10px; }
         .cycle-badge { position: absolute; top: 0; right: 0; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 0.7rem; font-weight: bold; padding: 4px 10px; border-bottom-left-radius: 12px; }
         
@@ -83,7 +76,6 @@
         .task-checkbox.checked { background: var(--success); border-color: var(--success); }
         .task-checkbox.checked::after { content: '✔'; font-size: 12px; color: black; font-weight: bold; }
         .task-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; margin-left: 5px; }
-        
         .tag-work { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
         .tag-personal { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
         .tag-urgent { background: rgba(239, 68, 68, 0.2); color: #f87171; }
@@ -92,11 +84,12 @@
         .btn-main { width: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; color: white; padding: 15px; border-radius: 12px; font-weight: 700; margin-top: 10px; cursor: pointer; }
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.8; padding: 5px; color: white; }
         .btn-revised { background: var(--primary); color: black; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
-        
+        .btn-google { background: #4285F4; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-download { background: var(--secondary); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; text-decoration: none; display: inline-block; margin-top: 5px; }
+
         .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-bottom: 10px; }
         .file-upload-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
         .file-btn { display: block; background: rgba(255,255,255,0.1); border: 1px dashed var(--primary); color: var(--primary); text-align: center; padding: 10px; border-radius: 12px; font-size: 0.9rem; }
-        .btn-download { background: var(--secondary); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; text-decoration: none; display: inline-block; margin-top: 5px; }
 
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; margin-top: 10px; }
         .cal-day { aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,0.03); font-size: 0.9rem; position: relative; }
@@ -127,13 +120,8 @@
         .nav-icon { font-size: 1.4rem; opacity: 0.5; transition: 0.3s; cursor: pointer; }
         .nav-icon.active { opacity: 1; color: var(--primary); transform: scale(1.2); }
 
-        /* FIXED NOTES AREA */
-        .notes-area { 
-            display: none; /* Hidden by default */
-            margin-top: 10px; 
-            padding-top: 10px; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-        }
+        .notes-area { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .notes-area.visible { display: block; }
         
         #toast { visibility: hidden; min-width: 250px; background-color: #1e1e1e; color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 10000; left: 50%; bottom: 100px; transform: translateX(-50%); border: 1px solid var(--primary); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
@@ -150,7 +138,7 @@
 
     <header>
         <div class="brand">NeonFocus</div>
-        <div id="auth-status" style="font-size:0.8rem; color:var(--text-muted)">V15.0 (Local)</div>
+        <div id="auth-status" style="font-size:0.8rem; color:var(--text-muted)">V16.0 (Hybrid)</div>
     </header>
 
     <section id="view-dashboard" class="view active">
@@ -218,7 +206,7 @@
         <h3>Profile</h3>
         <div class="glass-card">
             <input type="text" id="inp-username" placeholder="Username" onchange="updateUsername()" style="font-size:1.5rem; border:none; border-bottom:1px solid #555;">
-            <button id="btn-login" class="btn-main" style="background:#4285F4; margin-top:10px;" onclick="googleLogin()">Sign in with Google</button>
+            <button id="btn-login" class="btn-main btn-google" onclick="googleLogin()">Sign in with Google</button>
         </div>
         <h3>Activity (Last 7 Days)</h3>
         <div class="glass-card">
@@ -291,7 +279,7 @@
 
     <script>
         // ----------------------------------------------------
-        // 🔥 STEP 1: PASTE YOUR FIREBASE CONFIG HERE
+        // 🔥 PASTE FIREBASE CONFIG HERE
         // ----------------------------------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyCU60A6NFnkT7LdlvfG8ccjATRxDcl0h7Q",
@@ -303,7 +291,7 @@
         };
         // ----------------------------------------------------
 
-        const DB_NAME = 'NeonFocusDB';
+        const DB_NAME = 'NeonFocusDB_V16';
         const DB_VERSION = 1;
         const DEFAULT_INTERVALS = [3, 7, 14, 30, 60];
         
@@ -321,7 +309,7 @@
         let timerInt, currentAudioEl, editingId;
         let calDate = new Date();
 
-        /* --- DATABASE LAYER (HYBRID) --- */
+        /* --- HYBRID DATABASE --- */
         const DB = {
             open: () => {
                 return new Promise((resolve) => {
@@ -335,18 +323,19 @@
                 });
             },
             saveData: () => {
-                // 1. Save to Local IndexedDB
+                // 1. Save Text to Local DB
                 let tx = db.transaction(['data'], 'readwrite');
                 tx.objectStore('data').put({ id: 'main', ...appData });
                 
-                // 2. Sync to Firebase if logged in
+                // 2. Sync Text to Cloud (If Configured & Logged In)
                 if(user && firestore) {
                     firestore.collection('users').doc(user.uid).set(appData)
-                        .then(() => console.log("Synced to Cloud"))
-                        .catch(e => console.error("Cloud Sync Error", e));
+                        .then(() => console.log("Cloud Synced"))
+                        .catch(e => console.log("Sync Error", e));
                 }
             },
             saveFile: (id, file) => {
+                // Files always stay Local (IndexedDB)
                 let tx = db.transaction(['files'], 'readwrite');
                 tx.objectStore('files').put({ id: id, file: file });
             },
@@ -363,38 +352,41 @@
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
             if ("Notification" in window) Notification.requestPermission();
 
-            // Init Firebase if config exists
-            if (firebaseConfig.apiKey) {
+            // Init Cloud
+            if (typeof firebase !== 'undefined' && firebaseConfig.apiKey) {
                 firebase.initializeApp(firebaseConfig);
                 firestore = firebase.firestore();
                 auth = firebase.auth();
-                
                 auth.onAuthStateChanged(u => {
                     user = u;
                     if(user) {
-                        document.getElementById('btn-login').innerText = "Logged in as " + user.displayName;
-                        document.getElementById('auth-status').innerText = "V15.0 (Cloud Connected)";
-                        loadFromCloud(); // Pull cloud data on login
+                        document.getElementById('btn-login').innerText = "Logged in: " + user.displayName;
+                        document.getElementById('auth-status').innerText = "V16.0 (Connected)";
+                        loadFromCloud();
                     }
                 });
             }
 
             await DB.open();
 
-            // Load Data from Local DB first
+            // Load Local Data
             let tx = db.transaction(['data'], 'readonly');
             let req = tx.objectStore('data').get('main');
             
             req.onsuccess = async () => {
-                if (req.result) {
-                    appData = req.result;
-                } else {
-                    // Fallback to old LocalStorage if DB empty
-                    let old = localStorage.getItem('neon_focus_v13_1');
-                    if(old) { try { appData = JSON.parse(old); DB.saveData(); } catch(e){} }
+                if (req.result) appData = req.result;
+                else {
+                    // Fallback to old keys for migration
+                    let old = localStorage.getItem('neon_focus_v14_db') || localStorage.getItem('neon_focus_v13_1');
+                    if(old) { try{ appData = JSON.parse(old); DB.saveData(); } catch(e){} }
                     else DB.saveData();
                 }
-                renderUI();
+                
+                if(!appData.tasks) appData.tasks = [];
+                if(appData.username) document.getElementById('inp-username').value = appData.username;
+                document.body.className = `theme-${appData.theme || 'neon'}`;
+                checkStreak();
+                renderAll();
             };
         }
 
@@ -402,31 +394,20 @@
             if(!user || !firestore) return;
             firestore.collection('users').doc(user.uid).get().then(doc => {
                 if(doc.exists) {
-                    appData = doc.data();
-                    DB.saveData(); // Update local with cloud data
-                    renderUI();
-                    showToast("Synced from Cloud");
+                    let cloudData = doc.data();
+                    // Smart Merge: Keep local streaks if higher? For now, Cloud wins to ensure sync.
+                    appData = cloudData;
+                    DB.saveData();
+                    renderAll();
+                    showToast("Data pulled from Cloud");
                 }
             });
         }
 
         function googleLogin() {
-            if(!auth) return alert("Please add Firebase Config in code first!");
+            if(!auth) return alert("Paste Firebase Config in index.html first!");
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider).catch(e => alert(e.message));
-        }
-
-        function renderUI() {
-            if(!appData.tasks) appData.tasks = [];
-            if(!appData.topics) appData.topics = [];
-            if(!appData.history) appData.history = [];
-            
-            document.getElementById('header-date').innerText = new Date().toLocaleDateString();
-            if(appData.username) document.getElementById('inp-username').value = appData.username;
-            document.body.className = `theme-${appData.theme || 'neon'}`;
-            
-            checkStreak();
-            renderAll();
         }
 
         /* --- NAVIGATION --- */
@@ -446,9 +427,9 @@
 
         function closeModal() { document.getElementById('edit-modal').classList.remove('open'); editingId = null; }
         function showToast(msg) { let t = document.getElementById('toast'); t.innerText=msg; t.className='show'; setTimeout(()=>t.className='',3000); }
-        function updateFileLabel(inp) { document.getElementById('file-label').innerText = inp.files[0] ? "File Selected: " + inp.files[0].name : "📎 Attach File (PDF/Img)"; }
+        function updateFileLabel(inp) { document.getElementById('file-label').innerText = inp.files[0] ? "Selected: " + inp.files[0].name : "📎 Attach File"; }
 
-        /* --- TOPICS --- */
+        /* --- TOPICS & FILES --- */
         function addTopic() {
             let sub = document.getElementById('inp-subject').value;
             let top = document.getElementById('inp-topic').value;
@@ -475,10 +456,11 @@
             renderAll(); 
             document.getElementById('inp-topic').value = '';
             fileInput.value = '';
+            document.getElementById('file-label').innerText = "📎 Attach File";
             showToast('Topic Added');
         }
 
-        /* --- RENDERING (Notes Fixed) --- */
+        /* --- RENDERING --- */
         function renderAll() { renderDashboard(); renderSubjects(); }
         
         async function createCardHTML(t, isDue) {
@@ -493,7 +475,7 @@
                 }
             }
 
-            // NOTES FIX: Pass ID as string to prevent issues
+            // Fixed Notes Button: Using ID as String
             div.innerHTML = `
                 <div class="cycle-badge" style="background:${t.subjectColor}">C${t.cycle}</div>
                 <div style="font-size:0.8rem; color:${t.subjectColor}">${t.subject}</div>
@@ -524,6 +506,7 @@
             let list = document.getElementById('due-list'); list.innerHTML = '';
             let today = new Date().toISOString().split('T')[0];
             let due = appData.topics.filter(t => t.nextDate <= today);
+            
             document.getElementById('due-count').innerText = due.length;
             document.getElementById('task-count').innerText = (appData.tasks || []).filter(t => !t.completed).length;
             document.getElementById('streak-count').innerText = `🔥 ${appData.streak}`;
@@ -532,7 +515,6 @@
             due.forEach(async t => { list.appendChild(await createCardHTML(t, true)); });
         }
 
-        /* --- STANDARD FUNCTIONS --- */
         function markRevised(id) {
             let t = appData.topics.find(x => x.id == id); if(!t) return;
             if(!appData.history) appData.history = [];
@@ -545,10 +527,10 @@
             DB.saveData(); renderAll(); showToast(`Next review in ${days} days`);
         }
         
-        // FIXED TOGGLE NOTES - Uses inline style manipulation for guaranteed visibility
         function toggleNotes(id) { 
             let el = document.getElementById(`notes-${id}`);
             if(el) {
+                // Force inline style check
                 if(el.style.display === 'block') el.style.display = 'none';
                 else el.style.display = 'block';
             }
